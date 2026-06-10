@@ -1,0 +1,13 @@
+{
+  "name": "login-agibank",
+  "version": "1.0.0",
+  "description": "Automação de login Agibank com Playwright - Page Objects",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0"
+  }
+}
