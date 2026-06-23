@@ -1,0 +1,87 @@
+default:
+  image: mcr.microsoft.com/playwright:v1.44.0-jammy
+
+stages:
+  - checar-portabilidade-credito
+  - portabilidade-credito
+  - refin-preventivo
+
+.template: &template
+  before_script:
+    - npm ci
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - playwright-report/
+  tags:
+    - HLG
+    - QA
+
+checar-portabilidade:
+  <<: *template
+  stage: checar-portabilidade-credito
+  script:
+    - npx playwright test tests/portabilidade/checarOferta.spec.js
+  except:
+    - master
+
+checar-portabilidade-credito:
+  <<: *template
+  stage: portabilidade-credito
+  script:
+    - npx playwright test tests/portabilidade/checarOferta.spec.js
+  only:
+    - master
+
+portabilidade-credito-um:
+  <<: *template
+  stage: portabilidade-credito
+  script:
+    - npx playwright test tests/portabilidade/verificarPortabilidade.spec.js --grep "sucesso com um contrato"
+  needs:
+    - job: checar-portabilidade-credito
+      artifacts: true
+  only:
+    - master
+
+portabilidade-credito-dois:
+  <<: *template
+  stage: portabilidade-credito
+  script:
+    - npx playwright test tests/portabilidade/verificarPortabilidade.spec.js --grep "sucesso com dois contratos"
+  needs:
+    - job: checar-portabilidade-credito
+      artifacts: true
+  only:
+    - master
+
+checar-refin-preventivo:
+  <<: *template
+  stage: refin-preventivo
+  script:
+    - npx playwright test tests/refin/checarOferta.spec.js
+  only:
+    - master
+
+refin-preventivo:
+  <<: *template
+  stage: refin-preventivo
+  script:
+    - npx playwright test tests/refin/verificarRefin.spec.js --grep "deve efetivar com sucesso"
+  needs:
+    - job: checar-refin-preventivo
+      artifacts: true
+  only:
+    - master
+
+refin-preventivo-extincao:
+  <<: *template
+  stage: refin-preventivo
+  script:
+    - npx playwright test tests/refin/verificarRefin.spec.js --grep "extinção de cota"
+  needs:
+    - job: checar-refin-preventivo
+      artifacts: true
+  only:
+    - master
