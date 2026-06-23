@@ -1,0 +1,15 @@
+{
+  "name": "portabilidade-credito-api-tests",
+  "version": "1.0.0",
+  "description": "Testes de API - Portabilidade de Crédito e Refin Preventivo",
+  "scripts": {
+    "test": "playwright test",
+    "test:portabilidade": "playwright test tests/portabilidade",
+    "test:refin": "playwright test tests/refin",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "dotenv": "^16.4.5"
+  }
+}
